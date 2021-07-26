@@ -17,17 +17,11 @@ import numpy as np
 from gazebo_msgs.srv import GetModelState
 from std_srvs.srv import Empty
 
-ANTEPARO_X = 0.65
-ANTEPARO_Y = 1.0
+ANTEPARO_X = 0.90
+ANTEPARO_Y = 1.075
 
-DIST_TRHESHOLD = 0.2
-VEL_TRHESHOLD = 0.01
-
-FRENTE = 0.334 - 0.043
-
-
-def get_distancia(x, y):
-    return np.hypot(ANTEPARO_X - x, ANTEPARO_Y - y)
+DIST_TRHESHOLD = 0.5
+VEL_TRHESHOLD = 5e-3
 
 
 def get_model_state():
@@ -37,7 +31,8 @@ def get_model_state():
         resp = get_state("meu_primeiro_robo", "")
 
         distancia = np.hypot(
-            ANTEPARO_X - resp.pose.position.x, ANTEPARO_Y - resp.pose.position.y
+            ANTEPARO_X - resp.pose.position.x - rospy.get_param("/meia_largura"),
+            ANTEPARO_Y - resp.pose.position.y,
         )
         velocidade = np.hypot(resp.twist.linear.x, resp.twist.linear.y)
         return distancia, velocidade
